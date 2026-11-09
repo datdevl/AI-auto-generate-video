@@ -1,0 +1,180 @@
+{
+    "version": "1.0",
+    "renderer": "hyperframes",
+    "aspect": "9:16",
+    "metadata": {
+        "title": "Học lập trình với AI đúng cách",
+        "source": {
+            "url": "https://aicodingvn.vercel.app/",
+            "domain": "aicodingvn.vercel.app",
+            "image": null
+        },
+        "channel": "AI Coding"
+    },
+    "voice": {
+        "provider": "omnivoice",
+        "speed": 1.0
+    },
+    "scenes": [
+        {
+            "id": "s01",
+            "type": "hook",
+            "templateId": "frame-liquid-bg-hero",
+            "voiceText": "Học lập trình với trí tuệ nhân tạo, nhưng đa số mọi người đang làm sai cách. Hãy xem năm thói quen đơn giản giúp bạn tiến bộ thật sự mỗi ngày.",
+            "inputs": {
+                "kicker": "💡 Mẹo học code",
+                "headline": "Học code với AI đúng cách",
+                "subheadline": "Năm thói quen giúp bạn tiến bộ mỗi ngày",
+                "cta": "Xem ngay →",
+                "brand": "AI Coding"
+            }
+        },
+        {
+            "id": "s02",
+            "type": "body",
+            "templateId": "frame-glitch-title",
+            "voiceText": "Sai lầm đầu tiên là sao chép code mà không hiểu. Trí tuệ nhân tạo viết rất nhanh, nhưng nếu bạn không đọc hiểu thì lần sau vẫn không tự làm được.",
+            "inputs": {
+                "title": "Đừng copy mù quáng",
+                "subtitle": "AI viết code, nhưng bạn phải hiểu nó"
+            }
+        },
+        {
+            "id": "s03",
+            "type": "body",
+            "templateId": "frame-build-minimal",
+            "voiceText": "Thói quen số một là luôn hỏi tại sao. Sau mỗi đoạn code, hãy yêu cầu trí tuệ nhân tạo giải thích từng dòng, rồi tự diễn đạt lại bằng lời của bạn.",
+            "inputs": {
+                "eyebrow": "Thói quen số một",
+                "hero": "Hỏi sao",
+                "desc": "Sau mỗi đoạn code, hãy bắt AI giải thích từng dòng.",
+                "side_left": "AI Coding",
+                "side_right": "Mẹo học"
+            }
+        },
+        {
+            "id": "s04",
+            "type": "body",
+            "templateId": "frame-aicoding-list",
+            "voiceText": "Năm thói quen gồm: hỏi tại sao, tự gõ lại code, làm dự án nhỏ, đọc kỹ thông báo lỗi trước khi hỏi, và ôn lại vào cuối tuần. Chỉ cần đều đặn là bạn sẽ thấy khác biệt.",
+            "inputs": {
+                "title": "Thói quen",
+                "accent": "mỗi ngày",
+                "accent_from": "#7c5cff",
+                "accent_to": "#22d3ee",
+                "subtitle": "Đơn giản nhưng hiệu quả",
+                "items": [
+                    {
+                        "icon": "🤔",
+                        "title": "Hỏi tại sao",
+                        "desc": "Hiểu từng dòng code",
+                        "tag": "Số 1",
+                        "level": "good"
+                    },
+                    {
+                        "icon": "⌨️",
+                        "title": "Tự gõ lại code",
+                        "desc": "Không dán, hãy gõ tay",
+                        "tag": "Số 2",
+                        "level": "info"
+                    },
+                    {
+                        "icon": "🛠️",
+                        "title": "Làm dự án nhỏ",
+                        "desc": "Mỗi tuần một sản phẩm",
+                        "tag": "Số 3",
+                        "level": "info"
+                    },
+                    {
+                        "icon": "🐞",
+                        "title": "Đọc kỹ lỗi",
+                        "desc": "Tự gỡ trước khi hỏi AI",
+                        "tag": "Số 4",
+                        "level": "warn"
+                    },
+                    {
+                        "icon": "📚",
+                        "title": "Ôn cuối tuần",
+                        "desc": "Ghi nhớ lâu hơn",
+                        "tag": "Số 5",
+                        "level": "good"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "s05",
+            "type": "body",
+            "templateId": "frame-aicoding-comparison",
+            "voiceText": "So sánh hai cách học. Học thụ động là chép code chạy được rồi thôi, gặp lỗi mới thấy bí. Học chủ động là tự gõ, tự sửa và hiểu từng dòng, nên biết cách tự gỡ lỗi.",
+            "inputs": {
+                "badge": "Đối đầu",
+                "vs": "vs",
+                "left": {
+                    "label": "THỤ ĐỘNG",
+                    "from": "#ffb020",
+                    "to": "#ff7a3d",
+                    "icon": "😴",
+                    "bullets": [
+                        "Copy code chạy ngay",
+                        "Không hiểu vì sao chạy",
+                        "Gặp lỗi là bí"
+                    ]
+                },
+                "right": {
+                    "label": "CHỦ ĐỘNG",
+                    "from": "#34e0c0",
+                    "to": "#22d3ee",
+                    "icon": "🚀",
+                    "bullets": [
+                        "Tự gõ và sửa code",
+                        "Hiểu từng dòng",
+                        "Biết cách tự gỡ lỗi"
+                    ],
+                    "win": true
+                }
+            }
+        },
+        {
+            "id": "s06",
+            "type": "body",
+            "templateId": "frame-vignelli",
+            "voiceText": "Mỗi tuần hãy làm ít nhất một dự án nhỏ. Một công cụ đơn giản của riêng bạn sẽ dạy bạn nhiều hơn việc xem lướt thêm bài giảng.",
+            "inputs": {
+                "kicker": "Thực hành · Mỗi tuần",
+                "number": "1",
+                "label": "DỰ ÁN NHỎ\nMỖI TUẦN",
+                "note": "Làm ra sản phẩm thật giúp kiến thức ở lại lâu hơn.",
+                "brand": "AI Coding"
+            }
+        },
+        {
+            "id": "s07",
+            "type": "body",
+            "templateId": "frame-creative-voltage",
+            "voiceText": "Cuối cùng, hãy nhớ rằng đều đặn quan trọng hơn thiên tài. Mỗi ngày học một chút, sau vài tháng bạn sẽ ngạc nhiên về chính mình.",
+            "inputs": {
+                "meta": "// KIEN_TRI · ON",
+                "display_lines": [
+                    "Đều đặn",
+                    "hơn",
+                    "thiên tài"
+                ],
+                "accent_index": 1,
+                "script": "kiên trì",
+                "caption": "Mỗi ngày một chút"
+            }
+        },
+        {
+            "id": "s08",
+            "type": "outro",
+            "templateId": "frame-logo-outro",
+            "voiceText": "Nếu thấy hữu ích, hãy theo dõi để xem thêm mẹo mới mỗi ngày nhé.",
+            "inputs": {
+                "brand_name": "AI Coding",
+                "tagline": "Học thông minh, làm thật nhiều.",
+                "primary_url": "https://aicodingvn.vercel.app/"
+            }
+        }
+    ]
+}

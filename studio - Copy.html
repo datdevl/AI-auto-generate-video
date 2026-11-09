@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Studio</title>
+<style>
+:root{--ink:#eef0ff;--mute:#9aa0c8;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06);--ac:#8b73ff;--ac2:#22d3ee;--ok:#34d399;--bad:#fb7185;--warn:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:15px/1.5 "Be Vietnam Pro",system-ui,"Segoe UI",sans-serif;min-height:100vh;
+background:radial-gradient(900px 500px at 10% -10%,#3b2a8f55,transparent),radial-gradient(800px 500px at 100% 0%,#0e7490444,transparent),#0b0b14}
+main{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:30px;margin:0;background:linear-gradient(90deg,#ffd66b,#ff7ad9,#8b73ff,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mute);margin:4px 0 22px}
+.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:18px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;backdrop-filter:blur(10px)}
+.card h2{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+textarea{width:100%;height:520px;resize:vertical;background:#07070d;color:#d9dcff;border:1px solid var(--line);border-radius:12px;padding:12px;font:13px/1.5 Consolas,"Cascadia Mono",monospace;outline:none}
+textarea:focus{border-color:var(--ac)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+button{border:1px solid var(--line);background:var(--glass);color:var(--ink);padding:8px 14px;border-radius:10px;font:inherit;cursor:pointer;transition:.15s}
+button:hover:not(:disabled){border-color:var(--ac);transform:translateY(-1px)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.go{background:linear-gradient(90deg,#7c5cff,#22d3ee);border:0;font-weight:600;color:#fff;margin-left:auto}
+.st{margin-top:8px;font-size:13px;color:var(--mute)}.st.ok{color:var(--ok)}.st.bad{color:var(--bad)}
+.sc{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(0,0,0,.2)}
+.n{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#22d3ee);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.tag{font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mute);margin-left:6px}
+.t{font-weight:600;font-size:14px}.v{color:var(--mute);font-size:13px;margin-top:2px}
+.w{color:var(--warn);font-size:12px;margin-top:2px}.e{color:var(--bad);font-size:12px;margin-top:2px}
+pre{background:#07070d;border-radius:12px;padding:10px;max-height:240px;overflow:auto;font-size:12px;white-space:pre-wrap;margin:0}
+video{width:100%;max-width:340px;display:block;margin:12px auto 0;border-radius:14px;box-shadow:0 10px 40px #0008}
+.stack>*+*{margin-top:18px}
+</style>
+</head>
+<body>
+<main>
+<h1>Video Studio</h1>
+<p class="sub">Dán JSON kịch bản vào ô bên trái, kiểm tra ở bên phải, rồi bấm Tạo video.</p>
+<div id="svc" class="st" style="margin:-12px 0 16px"></div>
+<div class="grid">
+  <section class="card">
+    <h2>Kịch bản JSON</h2>
+    <div class="bar">
+      <button id="bSample">✨ Nạp mẫu</button>
+      <button id="bFmt">Định dạng</button>
+      <button id="bDl">Tải về</button>
+      <button id="bGo" class="go" disabled>🎬 Tạo video</button>
+      <button id="bStop" hidden>Dừng</button>
+    </div>
+    <textarea id="src" spellcheck="false" placeholder="Dán nội dung script.json vào đây..."></textarea>
+    <div id="st" class="st"></div>
+  </section>
+  <div class="stack">
+    <section class="card"><h2>Xem trước cảnh</h2><div id="sum" class="st"></div><div id="pv"></div></section>
+    <section class="card" id="out" hidden><h2>Tiến trình</h2><pre id="log"></pre><div id="vid"></div></section>
+  </div>
+</div>
+</main>
+<script type="application/json" id="sample">
+{
+    "version": "1.0",
+    "renderer": "hyperframes",
+    "aspect": "9:16",
+    "metadata": {
+        "title": "Học lập trình với AI đúng cách",
+        "source": { "url": "https://aicodingvn.vercel.app/", "domain": "aicodingvn.vercel.app", "image": null },
+        "channel": "AI Coding"
+    },
+    "voice": { "provider": "omnivoice", "speed": 1.0 },
+    "scenes": [
+        {
+            "id": "s01", "type": "hook", "templateId": "frame-liquid-bg-hero",
+            "voiceText": "Học lập trình với trí tuệ nhân tạo, nhưng đa số mọi người đang làm sai cách. Hãy xem năm thói quen đơn giản giúp bạn tiến bộ thật sự mỗi ngày.",
+            "inputs": { "kicker": "💡 Mẹo học code", "headline": "Học code với AI đúng cách", "subheadline": "Năm thói quen giúp bạn tiến bộ mỗi ngày", "cta": "Xem ngay →", "brand": "AI Coding" }
+        },
+        {
+            "id": "s02", "type": "body", "templateId": "frame-glitch-title",
+            "voiceText": "Sai lầm đầu tiên là sao chép code mà không hiểu. Trí tuệ nhân tạo viết rất nhanh, nhưng nếu bạn không đọc hiểu thì lần sau vẫn không tự làm được.",
+            "inputs": { "title": "Đừng copy mù quáng", "subtitle": "AI viết code, nhưng bạn phải hiểu nó" }
+        },
+        {
+            "id": "s03", "type": "body", "templateId": "frame-build-minimal",
+            "voiceText": "Thói quen số một là luôn hỏi tại sao. Sau mỗi đoạn code, hãy yêu cầu trí tuệ nhân tạo giải thích từng dòng, rồi tự diễn đạt lại bằng lời của bạn.",
+            "inputs": { "eyebrow": "Thói quen số một", "hero": "Hỏi sao", "desc": "Sau mỗi đoạn code, hãy bắt AI giải thích từng dòng.", "side_left": "AI Coding", "side_right": "Mẹo học" }
+        },
+        {
+            "id": "s04", "type": "body", "templateId": "frame-aicoding-list",
+            "voiceText": "Năm thói quen gồm: hỏi tại sao, tự gõ lại code, làm dự án nhỏ, đọc kỹ thông báo lỗi trước khi hỏi, và ôn lại vào cuối tuần. Chỉ cần đều đặn là bạn sẽ thấy khác biệt.",
+            "inputs": {
+                "title": "Thói quen", "accent": "mỗi ngày", "accent_from": "#7c5cff", "accent_to": "#22d3ee", "subtitle": "Đơn giản nhưng hiệu quả",
+                "items": [
+                    { "icon": "🤔", "title": "Hỏi tại sao", "desc": "Hiểu từng dòng code", "tag": "Số 1", "level": "good" },
+                    { "icon": "⌨️", "title": "Tự gõ lại code", "desc": "Không dán, hãy gõ tay", "tag": "Số 2", "level": "info" },
+                    { "icon": "🛠️", "title": "Làm dự án nhỏ", "desc": "Mỗi tuần một sản phẩm", "tag": "Số 3", "level": "info" },
+                    { "icon": "🐞", "title": "Đọc kỹ lỗi", "desc": "Tự gỡ trước khi hỏi AI", "tag": "Số 4", "level": "warn" },
+                    { "icon": "📚", "title": "Ôn cuối tuần", "desc": "Ghi nhớ lâu hơn", "tag": "Số 5", "level": "good" }
+                ]
+            }
+        },
+        {
+            "id": "s05", "type": "body", "templateId": "frame-aicoding-comparison",
+            "voiceText": "So sánh hai cách học. Học thụ động là chép code chạy được rồi thôi, gặp lỗi mới thấy bí. Học chủ động là tự gõ, tự sửa và hiểu từng dòng, nên biết cách tự gỡ lỗi.",
+            "inputs": {
+                "badge": "Đối đầu", "vs": "vs",
+                "left": { "label": "THỤ ĐỘNG", "from": "#ffb020", "to": "#ff7a3d", "icon": "😴", "bullets": ["Copy code chạy ngay", "Không hiểu vì sao chạy", "Gặp lỗi là bí"] },
+                "right": { "label": "CHỦ ĐỘNG", "from": "#34e0c0", "to": "#22d3ee", "icon": "🚀", "bullets": ["Tự gõ và sửa code", "Hiểu từng dòng", "Biết cách tự gỡ lỗi"], "win": true }
+            }
+        },
+        {
+            "id": "s06", "type": "body", "templateId": "frame-vignelli",
+            "voiceText": "Mỗi tuần hãy làm ít nhất một dự án nhỏ. Một công cụ đơn giản của riêng bạn sẽ dạy bạn nhiều hơn việc xem lướt thêm bài giảng.",
+            "inputs": { "kicker": "Thực hành · Mỗi tuần", "number": "1", "label": "DỰ ÁN NHỎ\nMỖI TUẦN", "note": "Làm ra sản phẩm thật giúp kiến thức ở lại lâu hơn.", "brand": "AI Coding" }
+        },
+        {
+            "id": "s07", "type": "body", "templateId": "frame-creative-voltage",
+            "voiceText": "Cuối cùng, hãy nhớ rằng đều đặn quan trọng hơn thiên tài. Mỗi ngày học một chút, sau vài tháng bạn sẽ ngạc nhiên về chính mình.",
+            "inputs": { "meta": "// KIEN_TRI · ON", "display_lines": ["Đều đặn", "hơn", "thiên tài"], "accent_index": 1, "script": "kiên trì", "caption": "Mỗi ngày một chút" }
+        },
+        {
+            "id": "s08", "type": "outro", "templateId": "frame-logo-outro",
+            "voiceText": "Nếu thấy hữu ích, hãy theo dõi để xem thêm mẹo mới mỗi ngày nhé.",
+            "inputs": { "brand_name": "AI Coding", "tagline": "Học thông minh, làm thật nhiều.", "primary_url": "https://aicodingvn.vercel.app/" }
+        }
+    ]
+}
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const NAMES={'frame-liquid-bg-hero':'Hook · Aurora hero','frame-vignelli':'Một con số · Vignelli','frame-pentagram-stat':'Một con số · Pentagram','frame-build-minimal':'Câu chốt · Build minimal','frame-bold-poster':'Tuyên bố · Bold poster','frame-creative-voltage':'Khẩu hiệu · Voltage','frame-glitch-title':'Tin sốc · Glitch','frame-aicoding-list':'Danh sách','frame-aicoding-comparison':'So sánh 2 thứ','frame-logo-outro':'Outro · Logo','frame-statement-outro':'Outro · Card đỏ'};
+const BAD=/[0-9]|[→&%$#+=]|https?:|\p{Extended_Pictographic}/u;
+let data=null,timer;
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+
+function analyze(){
+  const t=$('src').value.trim(),st=$('st'),pv=$('pv');pv.innerHTML='';data=null;$('sum').textContent='';$('bGo').disabled=true;
+  if(!t){st.className='st';st.textContent='Dán JSON vào ô trên, hoặc bấm “Nạp mẫu”.';return}
+  let j;try{j=JSON.parse(t)}catch(e){st.className='st bad';st.textContent='JSON chưa hợp lệ: '+e.message;return}
+  const sc=Array.isArray(j.scenes)?j.scenes:[];let errs=0,warns=0,words=0;
+  if(!sc.length){st.className='st bad';st.textContent='Thiếu mảng "scenes".';return}
+  sc.forEach((s,i)=>{
+    const card=el('div','sc'),body=el('div');
+    const known=NAMES[s.templateId],v=(s.voiceText||'').trim();words+=v?v.split(/\s+/).length:0;
+    const head=el('div','t',known||String(s.templateId));head.append(el('span','tag',s.type||'?'));
+    body.append(head,el('div','v',v?(v.length>110?v.slice(0,110)+'…':v):'(chưa có lời đọc)'));
+    if(!known){body.append(el('div','e','templateId không có trong danh mục.'));errs++}
+    if(!v){body.append(el('div','e','Thiếu voiceText.'));errs++}
+    if(!s.inputs||typeof s.inputs!=='object'){body.append(el('div','e','Thiếu inputs.'));errs++}
+    if(BAD.test(v)){body.append(el('div','w','Lời đọc có chữ số/ký hiệu/emoji: nên viết ra chữ.'));warns++}
+    if(i===0&&s.type!=='hook'){body.append(el('div','w','Cảnh đầu nên có type "hook".'));warns++}
+    if(i===sc.length-1&&s.type!=='outro'){body.append(el('div','w','Cảnh cuối nên có type "outro".'));warns++}
+    card.append(el('div','n',i+1),body);pv.append(card);
+  });
+  $('sum').textContent=`${sc.length} cảnh · ${words} từ · ước tính khoảng ${Math.round(words/2.6)} giây`;
+  if(errs){st.className='st bad';st.textContent=`Có ${errs} lỗi cần sửa trước khi tạo video.`;return}
+  data=j;$('bGo').disabled=false;st.className='st ok';
+  st.textContent='JSON hợp lệ'+(warns?` · ${warns} cảnh báo (vẫn tạo được).`:'. Sẵn sàng tạo video.');
+}
+$('src').oninput=analyze;
+$('bSample').onclick=()=>{$('src').value=JSON.stringify(JSON.parse($('sample').textContent),null,4);analyze()};
+$('bFmt').onclick=()=>{try{$('src').value=JSON.stringify(JSON.parse($('src').value),null,4);analyze()}catch{}};
+$('bDl').onclick=()=>{
+  const a=el('a');a.href=URL.createObjectURL(new Blob([$('src').value],{type:'application/json'}));a.download='script.json';a.click()};
+
+async function poll(){
+  const r=await (await fetch('/api/status')).json();
+  if(!r.dir)return;$('out').hidden=false;
+  const log=$('log');log.textContent=r.log;log.scrollTop=log.scrollHeight;
+  $('bGo').disabled=r.running||!data;$('bStop').hidden=!r.running;
+  if(r.running&&!timer)timer=setInterval(poll,1500);
+  if(!r.running){clearInterval(timer);timer=null;
+    if(r.video){const v=el('video');v.controls=true;v.src=`/output/${r.dir}/video.mp4`;$('vid').replaceChildren(v,el('div','st','Đã lưu tại output\\'+r.dir+'\\video.mp4'))}}
+}
+$('bGo').onclick=async()=>{
+  if(!data)return;$('vid').innerHTML='';
+  const r=await fetch('/api/render',{method:'POST',body:JSON.stringify({script:data})}),j=await r.json();
+  if(!r.ok){alert(j.error);return}
+  $('out').hidden=false;poll();
+};
+$('bStop').onclick=()=>fetch('/api/stop',{method:'POST'});
+async function svcPoll(){try{const r=await (await fetch('/api/status')).json();const f=x=>x?'✅ sẵn sàng':'⏳ đang khởi động';
+  $('svc').textContent=`Giọng đọc: ${f(r.svc.omnivoice)} · Adapter: ${f(r.svc.adapter)}`;$('svc').className='st '+(r.svc.omnivoice&&r.svc.adapter?'ok':'')}catch{}}
+analyze();poll();svcPoll();setInterval(svcPoll,3000);
+</script>
+</body>
+</html>

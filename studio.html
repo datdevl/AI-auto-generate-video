@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Video Studio · HyperFrames</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090a12;
+  --bg-card: rgba(18, 20, 36, 0.72);
+  --bg-input: #0c0d18;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --ink: #f1f3fd;
+  --mute: #949abf;
+  --faint: #565d85;
+  --ac: #7c5cff;
+  --ac-glow: rgba(124, 92, 255, 0.35);
+  --ac2: #06b6d4;
+  --ok: #10b981;
+  --ok-bg: rgba(16, 185, 129, 0.12);
+  --ok-border: rgba(16, 185, 129, 0.3);
+  --bad: #f43f5e;
+  --bad-bg: rgba(244, 63, 94, 0.12);
+  --bad-border: rgba(244, 63, 94, 0.3);
+  --warn: #f59e0b;
+  --warn-bg: rgba(245, 158, 11, 0.12);
+  --warn-border: rgba(245, 158, 11, 0.3);
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 14.5px/1.6 "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(1000px 600px at 15% -10%, rgba(124, 92, 255, 0.22), transparent 70%),
+    radial-gradient(900px 550px at 85% 0%, rgba(6, 182, 212, 0.18), transparent 70%),
+    radial-gradient(800px 500px at 50% 100%, rgba(124, 92, 255, 0.1), transparent 70%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thanh cuộn hiện đại */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.26); }
+
+/* Header cố định */
+header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(9, 10, 18, 0.7);
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.nav-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #7c5cff, #06b6d4);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  box-shadow: 0 4px 14px var(--ac-glow);
+}
+.brand-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #ffffff, #c7d2fe 50%, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: rgba(124, 92, 255, 0.18);
+  border: 1px solid rgba(124, 92, 255, 0.35);
+  color: #c7d2fe;
+}
+
+/* Trạng thái dịch vụ backend */
+.svc-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  color: var(--mute);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+}
+.svc-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--faint);
+  display: inline-block;
+}
+.dot.live {
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+.dot.wait {
+  background: var(--warn);
+  box-shadow: 0 0 8px var(--warn);
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+/* Thân trang */
+main {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px 24px 80px;
+}
+
+/* Thanh hướng dẫn phụ */
+.sub-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 14px 20px;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, rgba(124, 92, 255, 0.08), rgba(6, 182, 212, 0.04));
+  border: 1px solid rgba(124, 92, 255, 0.15);
+}
+.sub-bar p {
+  margin: 0;
+  font-size: 14px;
+  color: #cdd3f5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sub-bar .hint {
+  font-size: 12px;
+  color: var(--mute);
+}
+
+/* Bố cục lưới 2 cột */
+.grid {
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Card kính trong suốt */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.2s ease;
+}
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.card-header h2 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-header .badge {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--mute);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+/* Nút bấm & Thanh công cụ */
+.bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  align-items: center;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+/* Nút tạo video chính rực rỡ */
+button.go {
+  background: linear-gradient(135deg, #7c5cff 0%, #22d3ee 100%);
+  border: none;
+  font-weight: 600;
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px var(--ac-glow);
+  margin-left: auto;
+}
+button.go:hover:not(:disabled) {
+  box-shadow: 0 6px 22px rgba(124, 92, 255, 0.55);
+  filter: brightness(1.08);
+}
+button.stop {
+  background: rgba(244, 63, 94, 0.15);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #fda4af;
+}
+button.stop:hover:not(:disabled) {
+  background: rgba(244, 63, 94, 0.25);
+  border-color: #f43f5e;
+}
+
+#fileInput { display: none; }
+
+/* Vùng nhập JSON */
+.editor-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-input);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.editor-wrap:focus-within {
+  border-color: var(--ac);
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.22);
+}
+textarea {
+  width: 100%;
+  height: 520px;
+  resize: vertical;
+  background: transparent;
+  color: #e0e5ff;
+  border: none;
+  padding: 16px;
+  font: 13px/1.6 "JetBrains Mono", Consolas, Menlo, monospace;
+  outline: none;
+  tab-size: 2;
+}
+textarea::placeholder {
+  color: #43496e;
+}
+
+/* Thông báo trạng thái kiểm tra JSON */
+.st-card {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  color: var(--mute);
+  transition: all 0.2s ease;
+}
+.st-card.ok {
+  background: var(--ok-bg);
+  border-color: var(--ok-border);
+  color: #6ee7b7;
+}
+.st-card.bad {
+  background: var(--bad-bg);
+  border-color: var(--bad-border);
+  color: #fda4af;
+}
+.st-card.warn {
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+  color: #fde68a;
+}
+.st-icon {
+  font-size: 16px;
+  line-height: 1.2;
+  flex: none;
+}
+.st-text {
+  flex: 1;
+}
+
+/* Thống kê kịch bản */
+.stats-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.stat-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-pill strong {
+  color: #67e8f9;
+}
+
+/* Danh sách cảnh xem trước */
+.scene-list {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sc {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(14, 16, 30, 0.6);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.sc:hover {
+  background: rgba(22, 25, 46, 0.85);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+.sc::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--mute);
+}
+.sc.hook::before { background: linear-gradient(to bottom, #10b981, #06b6d4); }
+.sc.body::before { background: linear-gradient(to bottom, #7c5cff, #a855f7); }
+.sc.outro::before { background: linear-gradient(to bottom, #f43f5e, #f59e0b); }
+
+.n {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  flex: none;
+}
+.sc.hook .n { background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+.sc.body .n { background: rgba(124, 92, 255, 0.2); border-color: rgba(124, 92, 255, 0.4); color: #c7d2fe; }
+.sc.outro .n { background: rgba(244, 63, 94, 0.2); border-color: rgba(244, 63, 94, 0.4); color: #fda4af; }
+
+.sc-content {
+  flex: 1;
+  min-width: 0;
+}
+.sc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.t {
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  color: var(--mute);
+}
+.tag.hook { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+.tag.body { background: rgba(124, 92, 255, 0.15); color: #a78bfa; border-color: rgba(124, 92, 255, 0.3); }
+.tag.outro { background: rgba(244, 63, 94, 0.15); color: #fb7185; border-color: rgba(244, 63, 94, 0.3); }
+
+.template-code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.sc-voice {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  background: rgba(0, 0, 0, 0.25);
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 10px;
+  border-radius: 0 6px 6px 0;
+  margin: 6px 0 8px;
+  line-height: 1.5;
+}
+
+.sc-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--mute);
+}
+
+.e, .w {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 6px;
+}
+.e {
+  background: var(--bad-bg);
+  border: 1px solid var(--bad-border);
+  color: #fda4af;
+}
+.w {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  color: #fde68a;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--mute);
+}
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+/* Khung Terminal Log */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.log-box {
+  background: #080911;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.log-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--line);
+}
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+.t-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.t-dot.r { background: #ff5f56; }
+.t-dot.y { background: #ffbd2e; }
+.t-dot.g { background: #27c93f; }
+.log-title {
+  font-size: 11.5px;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--mute);
+}
+pre#log {
+  background: transparent;
+  color: #93c5fd;
+  border: none;
+  padding: 14px;
+  max-height: 240px;
+  overflow-y: auto;
+  font: 12px/1.6 "JetBrains Mono", Consolas, monospace;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Xem trước Video */
+.video-preview-wrapper {
+  margin-top: 16px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+}
+.video-frame {
+  display: inline-block;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  background: #000;
+  max-width: 320px;
+  width: 100%;
+}
+video {
+  width: 100%;
+  display: block;
+  outline: none;
+  aspect-ratio: 9/16;
+  background: #000;
+}
+.video-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.rendering-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #67e8f9;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  padding: 4px 10px;
+  border-radius: 99px;
+  animation: pulse-border 1.8s infinite;
+}
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(6, 182, 212, 0.3); }
+  50% { border-color: rgba(6, 182, 212, 0.8); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <div class="brand-title">
+          Video Studio
+          <span class="brand-tag">HyperFrames</span>
+        </div>
+      </div>
+    </div>
+    
+    <div id="svc" class="svc-bar">
+      <div class="svc-item">
+        <span class="dot"></span>
+        <span>Đang kiểm tra kết nối...</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="sub-bar">
+    <p>
+      <span>✨</span>
+      <span>Dán kịch bản JSON vào ô bên trái, kiểm tra danh sách cảnh và bấm <strong>Tạo video</strong> để bắt đầu render.</span>
+    </p>
+    <span class="hint">Tỉ lệ khung hình: <strong>9:16 (Shorts / Reels / TikTok)</strong></span>
+  </div>
+
+  <div class="grid">
+    <!-- Cột trái: Soạn thảo JSON -->
+    <section class="card">
+      <div class="card-header">
+        <h2>
+          <span>📝</span>
+          <span>Kịch bản JSON</span>
+        </h2>
+        <span class="badge" id="editorBadge">UTF-8 • JSON</span>
+      </div>
+
+      <div class="bar">
+        <button id="bSample" title="Nạp nội dung kịch bản mẫu">
+          <span>✨</span> Nạp mẫu
+        </button>
+        <button id="bFmt" title="Căn chỉnh thụt lề JSON">
+          <span>📐</span> Định dạng
+        </button>
+        <button id="bCopy" title="Sao chép kịch bản vào clipboard">
+          <span>📋</span> Sao chép
+        </button>
+        <button id="bUp" title="Tải file JSON từ máy tính">
+          <span>📂</span> Mở file
+        </button>
+        <input type="file" id="fileInput" accept=".json,application/json">
+        <button id="bDl" title="Tải xuống tệp script.json">
+          <span>💾</span> Tải về
+        </button>
+        <button id="bClear" title="Xóa nội dung kịch bản">
+          <span>🗑️</span>
+        </button>
+        
+        <button id="bGo" class="go" disabled>
+          <span>🎬</span>
+          <span id="bGoText">Tạo video</span>
+        </button>
+        <button id="bStop" class="stop" hidden>
+          <span>⏹️</span> Dừng
+        </button>
+      </div>
+
+      <div class="editor-wrap">
+        <textarea id="src" spellcheck="false" placeholder="Dán nội dung script.json vào đây hoặc bấm “Nạp mẫu”..."></textarea>
+      </div>
+
+      <div id="st" class="st-card">
+        <div class="st-icon">💡</div>
+        <div class="st-text">Dán JSON vào ô trên, hoặc bấm “Nạp mẫu” để bắt đầu.</div>
+      </div>
+    </section>
+
+    <!-- Cột phải: Xem trước cảnh & Tiến trình render -->
+    <div class="stack">
+      <!-- Xem trước cảnh -->
+      <section class="card">
+        <div class="card-header">
+          <h2>
+            <span>👁️</span>
+            <span>Xem trước cảnh</span>
+          </h2>
+          <div id="sum" class="stats-bar"></div>
+        </div>
+
+        <div id="pv" class="scene-list">
+          <div class="empty-state">
+            <div class="empty-icon">🎞️</div>
+            <div>Chưa có dữ liệu cảnh nào</div>
+            <div style="font-size: 12px; margin-top: 4px; color: var(--faint);">Nạp JSON bên trái để xem bố cục các cảnh</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tiến trình render & Video đầu ra -->
+      <section class="card" id="out" hidden>
+        <div class="card-header">
+          <h2>
+            <span>⚙️</span>
+            <span>Tiến trình render</span>
+          </h2>
+          <div id="renderBadge"></div>
+        </div>
+
+        <div class="log-box">
+          <div class="log-topbar">
+            <div class="terminal-dots">
+              <span class="t-dot r"></span>
+              <span class="t-dot y"></span>
+              <span class="t-dot g"></span>
+            </div>
+            <span class="log-title">render.log</span>
+            <button id="bCopyLog" style="padding: 2px 8px; font-size: 11px;">Sao chép log</button>
+          </div>
+          <pre id="log"></pre>
+        </div>
+
+        <div id="vid"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script type="application/json" id="sample">
+{
+    "version": "1.0",
+    "renderer": "hyperframes",
+    "aspect": "9:16",
+    "metadata": {
+        "title": "Học lập trình với AI đúng cách",
+        "source": { "url": "https://aicodingvn.vercel.app/", "domain": "aicodingvn.vercel.app", "image": null },
+        "channel": "AI Coding"
+    },
+    "voice": { "provider": "omnivoice", "speed": 1.0 },
+    "scenes": [
+        {
+            "id": "s01", "type": "hook", "templateId": "frame-liquid-bg-hero",
+            "voiceText": "Học lập trình với trí tuệ nhân tạo, nhưng đa số mọi người đang làm sai cách. Hãy xem năm thói quen đơn giản giúp bạn tiến bộ thật sự mỗi ngày.",
+            "inputs": { "kicker": "💡 Mẹo học code", "headline": "Học code với AI đúng cách", "subheadline": "Năm thói quen giúp bạn tiến bộ mỗi ngày", "cta": "Xem ngay →", "brand": "AI Coding" }
+        },
+        {
+            "id": "s02", "type": "body", "templateId": "frame-glitch-title",
+            "voiceText": "Sai lầm đầu tiên là sao chép code mà không hiểu. Trí tuệ nhân tạo viết rất nhanh, nhưng nếu bạn không đọc hiểu thì lần sau vẫn không tự làm được.",
+            "inputs": { "title": "Đừng copy mù quáng", "subtitle": "AI viết code, nhưng bạn phải hiểu nó" }
+        },
+        {
+            "id": "s03", "type": "body", "templateId": "frame-build-minimal",
+            "voiceText": "Thói quen số một là luôn hỏi tại sao. Sau mỗi đoạn code, hãy yêu cầu trí tuệ nhân tạo giải thích từng dòng, rồi tự diễn đạt lại bằng lời của bạn.",
+            "inputs": { "eyebrow": "Thói quen số một", "hero": "Hỏi sao", "desc": "Sau mỗi đoạn code, hãy bắt AI giải thích từng dòng.", "side_left": "AI Coding", "side_right": "Mẹo học" }
+        },
+        {
+            "id": "s04", "type": "body", "templateId": "frame-aicoding-list",
+            "voiceText": "Năm thói quen gồm: hỏi tại sao, tự gõ lại code, làm dự án nhỏ, đọc kỹ thông báo lỗi trước khi hỏi, và ôn lại vào cuối tuần. Chỉ cần đều đặn là bạn sẽ thấy khác biệt.",
+            "inputs": {
+                "title": "Thói quen", "accent": "mỗi ngày", "accent_from": "#7c5cff", "accent_to": "#22d3ee", "subtitle": "Đơn giản nhưng hiệu quả",
+                "items": [
+                    { "icon": "🤔", "title": "Hỏi tại sao", "desc": "Hiểu từng dòng code", "tag": "Số 1", "level": "good" },
+                    { "icon": "⌨️", "title": "Tự gõ lại code", "desc": "Không dán, hãy gõ tay", "tag": "Số 2", "level": "info" },
+                    { "icon": "🛠️", "title": "Làm dự án nhỏ", "desc": "Mỗi tuần một sản phẩm", "tag": "Số 3", "level": "info" },
+                    { "icon": "🐞", "title": "Đọc kỹ lỗi", "desc": "Tự gỡ trước khi hỏi AI", "tag": "Số 4", "level": "warn" },
+                    { "icon": "📚", "title": "Ôn cuối tuần", "desc": "Ghi nhớ lâu hơn", "tag": "Số 5", "level": "good" }
+                ]
+            }
+        },
+        {
+            "id": "s05", "type": "body", "templateId": "frame-aicoding-comparison",
+            "voiceText": "So sánh hai cách học. Học thụ động là chép code chạy được rồi thôi, gặp lỗi mới thấy bí. Học chủ động là tự gõ, tự sửa và hiểu từng dòng, nên biết cách tự gỡ lỗi.",
+            "inputs": {
+                "badge": "Đối đầu", "vs": "vs",
+                "left": { "label": "THỤ ĐỘNG", "from": "#ffb020", "to": "#ff7a3d", "icon": "😴", "bullets": ["Copy code chạy ngay", "Không hiểu vì sao chạy", "Gặp lỗi là bí"] },
+                "right": { "label": "CHỦ ĐỘNG", "from": "#34e0c0", "to": "#22d3ee", "icon": "🚀", "bullets": ["Tự gõ và sửa code", "Hiểu từng dòng", "Biết cách tự gỡ lỗi"], "win": true }
+            }
+        },
+        {
+            "id": "s06", "type": "body", "templateId": "frame-vignelli",
+            "voiceText": "Mỗi tuần hãy làm ít nhất một dự án nhỏ. Một công cụ đơn giản của riêng bạn sẽ dạy bạn nhiều hơn việc xem lướt thêm bài giảng.",
+            "inputs": { "kicker": "Thực hành · Mỗi tuần", "number": "1", "label": "DỰ ÁN NHỎ\nMỖI TUẦN", "note": "Làm ra sản phẩm thật giúp kiến thức ở lại lâu hơn.", "brand": "AI Coding" }
+        },
+        {
+            "id": "s07", "type": "body", "templateId": "frame-creative-voltage",
+            "voiceText": "Cuối cùng, hãy nhớ rằng đều đặn quan trọng hơn thiên tài. Mỗi ngày học một chút, sau vài tháng bạn sẽ ngạc nhiên về chính mình.",
+            "inputs": { "meta": "// KIEN_TRI · ON", "display_lines": ["Đều đặn", "hơn", "thiên tài"], "accent_index": 1, "script": "kiên trì", "caption": "Mỗi ngày một chút" }
+        },
+        {
+            "id": "s08", "type": "outro", "templateId": "frame-logo-outro",
+            "voiceText": "Nếu thấy hữu ích, hãy theo dõi để xem thêm mẹo mới mỗi ngày nhé.",
+            "inputs": { "brand_name": "AI Coding", "tagline": "Học thông minh, làm thật nhiều.", "primary_url": "https://aicodingvn.vercel.app/" }
+        }
+    ]
+}
+</script>
+
+<script>
+const $ = id => document.getElementById(id);
+const NAMES = {
+  'frame-liquid-bg-hero': 'Hook · Aurora hero',
+  'frame-vignelli': 'Một con số · Vignelli',
+  'frame-pentagram-stat': 'Một con số · Pentagram',
+  'frame-build-minimal': 'Câu chốt · Build minimal',
+  'frame-bold-poster': 'Tuyên bố · Bold poster',
+  'frame-creative-voltage': 'Khẩu hiệu · Voltage',
+  'frame-glitch-title': 'Tin sốc · Glitch',
+  'frame-aicoding-list': 'Danh sách',
+  'frame-aicoding-comparison': 'So sánh 2 thứ',
+  'frame-logo-outro': 'Outro · Logo',
+  'frame-statement-outro': 'Outro · Card đỏ'
+};
+const BAD = /[0-9]|[→&%$#+=]|https?:|\p{Extended_Pictographic}/u;
+let data = null, timer = null;
+
+const el = (t, c, x) => {
+  const e = document.createElement(t);
+  if (c) e.className = c;
+  if (x !== undefined) e.textContent = x;
+  return e;
+};
+
+function setStatus(type, icon, text) {
+  const st = $('st');
+  st.className = 'st-card ' + (type || '');
+  st.replaceChildren(
+    el('div', 'st-icon', icon),
+    el('div', 'st-text', text)
+  );
+}
+
+function analyze() {
+  const t = $('src').value.trim();
+  const pv = $('pv');
+  const sum = $('sum');
+  pv.innerHTML = '';
+  sum.innerHTML = '';
+  data = null;
+  $('bGo').disabled = true;
+
+  if (!t) {
+    setStatus('', '💡', 'Dán JSON vào ô trên, hoặc bấm “Nạp mẫu” để bắt đầu.');
+    pv.replaceChildren(createEmptyState());
+    return;
+  }
+
+  let j;
+  try {
+    j = JSON.parse(t);
+  } catch (e) {
+    setStatus('bad', '⚠️', 'JSON chưa hợp lệ: ' + e.message);
+    pv.replaceChildren(createEmptyState('Lỗi cú pháp JSON', 'Vui lòng kiểm tra dấu ngoặc hoặc định dạng cú pháp'));
+    return;
+  }
+
+  const sc = Array.isArray(j.scenes) ? j.scenes : [];
+  let errs = 0, warns = 0, words = 0;
+
+  if (!sc.length) {
+    setStatus('bad', '❌', 'Kịch bản không có mảng "scenes" hoặc rỗng.');
+    pv.replaceChildren(createEmptyState('Thiếu mảng scenes', 'Cần ít nhất 1 cảnh trong "scenes": [...]'));
+    return;
+  }
+
+  sc.forEach((s, i) => {
+    const card = el('div', 'sc ' + (s.type || 'body'));
+    const body = el('div', 'sc-content');
+
+    const known = NAMES[s.templateId];
+    const v = (s.voiceText || '').trim();
+    const sceneWords = v ? v.split(/\s+/).filter(Boolean).length : 0;
+    words += sceneWords;
+
+    // Tiêu đề cảnh
+    const head = el('div', 'sc-head');
+    const titleWrap = el('div', 't');
+    titleWrap.append(
+      document.createTextNode(known || String(s.templateId || 'Chưa đặt template')),
+      el('span', 'tag ' + (s.type || 'body'), s.type || 'cảnh')
+    );
+    if (s.templateId) {
+      head.append(titleWrap, el('span', 'template-code', s.templateId));
+    } else {
+      head.append(titleWrap);
+    }
+
+    // Lời thoại đầy đủ
+    const voiceBox = el('div', 'sc-voice', v ? `“${v}”` : '(Chưa có lời đọc voiceText)');
+
+    // Thống kê cảnh
+    const metaBox = el('div', 'sc-meta');
+    metaBox.append(
+      el('span', '', `⏱️ ~${Math.max(1, Math.round(sceneWords / 2.6))}s`),
+      el('span', '', `📝 ${sceneWords} từ`)
+    );
+
+    body.append(head, voiceBox, metaBox);
+
+    // Kiểm tra tính hợp lệ
+    if (!known) {
+      body.append(createAlert('e', 'Template ID không nằm trong danh mục hỗ trợ.'));
+      errs++;
+    }
+    if (!v) {
+      body.append(createAlert('e', 'Thiếu nội dung lời đọc voiceText.'));
+      errs++;
+    }
+    if (!s.inputs || typeof s.inputs !== 'object') {
+      body.append(createAlert('e', 'Thiếu thuộc tính inputs hoặc inputs không phải object.'));
+      errs++;
+    }
+    if (BAD.test(v)) {
+      body.append(createAlert('w', 'Lời đọc có chứa chữ số, emoji hoặc ký hiệu. Nên phiên âm thành chữ để đọc mượt mà.'));
+      warns++;
+    }
+    if (i === 0 && s.type !== 'hook') {
+      body.append(createAlert('w', 'Cảnh đầu tiên nên có type: "hook" để mở đầu hấp dẫn.'));
+      warns++;
+    }
+    if (i === sc.length - 1 && s.type !== 'outro') {
+      body.append(createAlert('w', 'Cảnh cuối cùng nên có type: "outro" để kết video.'));
+      warns++;
+    }
+
+    const numBadge = el('div', 'n', (i + 1 < 10 ? '0' : '') + (i + 1));
+    card.append(numBadge, body);
+    pv.append(card);
+  });
+
+  const estSec = Math.round(words / 2.6);
+  sum.replaceChildren(
+    createStatPill('🎬', `${sc.length} cảnh`),
+    createStatPill('📝', `${words} từ`),
+    createStatPill('⏱️', `~${estSec}s`)
+  );
+
+  if (errs) {
+    setStatus('bad', '❌', `Phát hiện ${errs} lỗi bắt buộc cần sửa trước khi tạo video.`);
+    return;
+  }
+
+  data = j;
+  $('bGo').disabled = false;
+  if (warns) {
+    setStatus('warn', '⚡', `Kịch bản hợp lệ với ${warns} khuyến nghị tối ưu (vẫn có thể render bình thường).`);
+  } else {
+    setStatus('ok', '✅', 'Kịch bản hoàn hảo! Đã sẵn sàng bấm “Tạo video”.');
+  }
+}
+
+function createStatPill(icon, text) {
+  const p = el('span', 'stat-pill');
+  p.innerHTML = `<span>${icon}</span> <strong>${text}</strong>`;
+  return p;
+}
+
+function createAlert(type, text) {
+  const d = el('div', type);
+  const icon = type === 'e' ? '❌' : '⚠️';
+  d.textContent = `${icon} ${text}`;
+  return d;
+}
+
+function createEmptyState(title = 'Chưa có dữ liệu cảnh nào', sub = 'Nạp JSON bên trái để xem bố cục các cảnh') {
+  const w = el('div', 'empty-state');
+  w.append(
+    el('div', 'empty-icon', '🎞️'),
+    el('div', '', title),
+    el('div', '', sub)
+  );
+  w.lastChild.style = 'font-size: 12px; margin-top: 4px; color: var(--faint);';
+  return w;
+}
+
+// Xử lý phím Tab thụt lề 2 khoảng trắng
+$('src').addEventListener('keydown', function(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const start = this.selectionStart;
+    const end = this.selectionEnd;
+    this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+    this.selectionStart = this.selectionEnd = start + 2;
+    analyze();
+  }
+});
+
+// Kéo thả file JSON vào ô textarea
+$('src').addEventListener('dragover', e => e.preventDefault());
+$('src').addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = evt => {
+      $('src').value = evt.target.result;
+      analyze();
+    };
+    reader.readAsText(file);
+  }
+});
+
+$('src').oninput = analyze;
+
+// Các nút tương tác
+$('bSample').onclick = () => {
+  $('src').value = JSON.stringify(JSON.parse($('sample').textContent), null, 4);
+  analyze();
+};
+
+$('bFmt').onclick = () => {
+  try {
+    $('src').value = JSON.stringify(JSON.parse($('src').value), null, 4);
+    analyze();
+  } catch (e) {
+    setStatus('bad', '⚠️', 'Không thể định dạng: JSON cú pháp chưa đúng.');
+  }
+};
+
+$('bCopy').onclick = async () => {
+  if (!$('src').value.trim()) return;
+  try {
+    await navigator.clipboard.writeText($('src').value);
+    const orig = $('bCopy').innerHTML;
+    $('bCopy').innerHTML = '<span>✅</span> Đã chép!';
+    setTimeout(() => { $('bCopy').innerHTML = orig; }, 1800);
+  } catch {
+    alert('Không thể sao chép tự động, vui lòng chọn và Ctrl+C.');
+  }
+};
+
+$('bClear').onclick = () => {
+  if ($('src').value && confirm('Bạn có chắc muốn xóa sạch ô nhập kịch bản?')) {
+    $('src').value = '';
+    analyze();
+  }
+};
+
+// Mở và tải file
+$('bUp').onclick = () => $('fileInput').click();
+$('fileInput').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    $('src').value = ev.target.result;
+    analyze();
+  };
+  reader.readAsText(f);
+  e.target.value = '';
+};
+
+$('bDl').onclick = () => {
+  const content = $('src').value;
+  if (!content.trim()) {
+    alert('Chưa có nội dung để tải về.');
+    return;
+  }
+  const a = el('a');
+  a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
+  a.download = 'script.json';
+  a.click();
+};
+
+$('bCopyLog').onclick = async () => {
+  const logText = $('log').textContent;
+  if (!logText) return;
+  try {
+    await navigator.clipboard.writeText(logText);
+    $('bCopyLog').textContent = 'Đã chép!';
+    setTimeout(() => { $('bCopyLog').textContent = 'Sao chép log'; }, 1500);
+  } catch {}
+};
+
+// Quản lý trạng thái và Render
+async function poll() {
+  try {
+    const res = await fetch('/api/status');
+    const r = await res.json();
+    if (!r.dir && !r.running) return;
+
+    $('out').hidden = false;
+    const log = $('log');
+    log.textContent = r.log || '';
+    log.scrollTop = log.scrollHeight;
+
+    $('bGo').disabled = r.running || !data;
+    $('bStop').hidden = !r.running;
+
+    if (r.running) {
+      $('bGoText').textContent = 'Đang render...';
+      $('renderBadge').replaceChildren(
+        el('span', 'rendering-badge', '⚡ Đang thực thi render...')
+      );
+      if (!timer) timer = setInterval(poll, 1500);
+    } else {
+      $('bGoText').textContent = 'Tạo video';
+      $('renderBadge').innerHTML = '';
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+      if (r.video) {
+        renderVideoSuccess(r.dir);
+      }
+    }
+  } catch (err) {
+    console.warn('Poll error:', err);
+  }
+}
+
+function renderVideoSuccess(dir) {
+  const wrapper = el('div', 'video-preview-wrapper');
+  
+  const title = el('div', '', '🎉 Render video hoàn tất!');
+  title.style = 'font-weight: 700; font-size: 16px; color: #34d399; margin-bottom: 12px;';
+
+  const frame = el('div', 'video-frame');
+  const v = el('video');
+  v.controls = true;
+  v.autoplay = false;
+  v.src = `/output/${dir}/video.mp4`;
+  frame.append(v);
+
+  const actions = el('div', 'video-actions');
+  
+  const dlBtn = el('a', '', '⬇️ Tải file video');
+  dlBtn.href = `/output/${dir}/video.mp4`;
+  dlBtn.download = `video-${dir}.mp4`;
+  dlBtn.className = 'go';
+  dlBtn.style = 'text-decoration: none; font-size: 13px; padding: 8px 16px;';
+
+  const openBtn = el('a', '', '🔗 Mở tab mới');
+  openBtn.href = `/output/${dir}/video.mp4`;
+  openBtn.target = '_blank';
+  openBtn.style = 'text-decoration: none; font-size: 13px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: rgba(255,255,255,0.06);';
+
+  actions.append(dlBtn, openBtn);
+
+  const pathHint = el('div', '', `Đường dẫn: output\\${dir}\\video.mp4`);
+  pathHint.style = 'font-size: 11.5px; color: var(--mute); margin-top: 12px; font-family: monospace;';
+
+  wrapper.append(title, frame, actions, pathHint);
+  $('vid').replaceChildren(wrapper);
+}
+
+$('bGo').onclick = async () => {
+  if (!data) return;
+  $('vid').innerHTML = '';
+  $('bGo').disabled = true;
+  $('bGoText').textContent = 'Đang gửi lệnh...';
+
+  try {
+    const r = await fetch('/api/render', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ script: data })
+    });
+    const j = await r.json();
+    if (!r.ok) {
+      alert(j.error || 'Có lỗi khi yêu cầu render');
+      $('bGo').disabled = false;
+      $('bGoText').textContent = 'Tạo video';
+      return;
+    }
+    $('out').hidden = false;
+    poll();
+  } catch (e) {
+    alert('Không thể kết nối đến máy chủ render: ' + e.message);
+    $('bGo').disabled = false;
+    $('bGoText').textContent = 'Tạo video';
+  }
+};
+
+$('bStop').onclick = async () => {
+  if (confirm('Bạn có chắc muốn dừng tiến trình render đang chạy?')) {
+    await fetch('/api/stop', { method: 'POST' });
+  }
+};
+
+async function svcPoll() {
+  try {
+    const r = await (await fetch('/api/status')).json();
+    const svc = $('svc');
+    const omniOk = r.svc && r.svc.omnivoice;
+    const adaptOk = r.svc && r.svc.adapter;
+
+    svc.replaceChildren();
+
+    const omniItem = el('div', 'svc-item');
+    const omniDot = el('span', 'dot ' + (omniOk ? 'live' : 'wait'));
+    omniItem.append(omniDot, document.createTextNode(`Omnivoice: ${omniOk ? 'Sẵn sàng' : 'Khởi động'}`));
+
+    const sep = el('span', '', '·');
+    sep.style.color = 'var(--faint)';
+
+    const adaptItem = el('div', 'svc-item');
+    const adaptDot = el('span', 'dot ' + (adaptOk ? 'live' : 'wait'));
+    adaptItem.append(adaptDot, document.createTextNode(`Adapter: ${adaptOk ? 'Sẵn sàng' : 'Khởi động'}`));
+
+    svc.append(omniItem, sep, adaptItem);
+  } catch {
+    const svc = $('svc');
+    svc.replaceChildren();
+    const item = el('div', 'svc-item');
+    item.append(el('span', 'dot wait'), document.createTextNode('Chưa kết nối backend'));
+    svc.append(item);
+  }
+}
+
+// Khởi chạy khi load trang
+analyze();
+poll();
+svcPoll();
+setInterval(svcPoll, 4000);
+</script>
+</body>
+</html>
