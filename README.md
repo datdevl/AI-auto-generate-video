@@ -3,7 +3,7 @@
 
 <img src="./assets/logo.svg" width="110" alt="AI Auto Generate Video Logo"/>
 
-# AI AUTO GENERATE VIDEO
+# RUN : NODE studio.mjs
 
 ### AI-Powered Automated Video Generation
 
