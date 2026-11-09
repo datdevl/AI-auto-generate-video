@@ -445,3 +445,5 @@ If this project saved you time, please consider:
 <sub>Made with ❤️ by <b>AI Coding</b> · <a href="https://aicodingvn.vercel.app/">aicodingvn.vercel.app</a></sub>
 
 </div>
+#   A I - a u t o - g e n e r a t e - v i d e o  
+ 
